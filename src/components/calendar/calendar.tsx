@@ -53,7 +53,10 @@ export const Calendar: React.FC<CalendarProps> = ({
         i === 0 ||
         date.getFullYear() !== dateSetup.dates[i - 1].getFullYear()
       ) {
-        const topValue = date.getFullYear().toString();
+        // const topValue = date.getFullYear().toString();
+        const topValue = getCachedDateTimeFormat(locale, {
+          year: "numeric",
+        }).format(date);
         let xText: number;
         if (rtl) {
           xText = (6 + i + date.getMonth() + 1) * columnWidth;
@@ -87,7 +90,11 @@ export const Calendar: React.FC<CalendarProps> = ({
       let topValue = "";
       if (i === 0 || date.getMonth() !== dates[i - 1].getMonth()) {
         // top
-        topValue = `${getLocaleMonth(date, locale)}, ${date.getFullYear()}`;
+        // topValue = `${getLocaleMonth(date, locale)}, ${date.getFullYear()}`;
+        topValue = getCachedDateTimeFormat(locale, {
+          year: "numeric",
+          month: "long",
+        }).format(date);
       }
       // bottom
       const bottomValue = `W${getWeekNumberISO8601(date)}`;
@@ -132,9 +139,15 @@ export const Calendar: React.FC<CalendarProps> = ({
     const dates = dateSetup.dates;
     for (let i = 0; i < dates.length; i++) {
       const date = dates[i];
-      const bottomValue = `${getLocalDayOfWeek(date, locale, "short")}, ${date
-        .getDate()
-        .toString()}`;
+      const bottomValue =
+        locale === "ja" || locale === "ja-JP"
+          ? `${getCachedDateTimeFormat(locale, {
+              day: "numeric",
+              weekday: "narrow",
+            }).format(date)}`
+          : `${getLocalDayOfWeek(date, locale, "short")}, ${date
+              .getDate()
+              .toString()}`;
 
       bottomValues.push(
         <text
@@ -150,7 +163,11 @@ export const Calendar: React.FC<CalendarProps> = ({
         i + 1 !== dates.length &&
         date.getMonth() !== dates[i + 1].getMonth()
       ) {
-        const topValue = getLocaleMonth(date, locale);
+        // const topValue = getLocaleMonth(date, locale);
+        const topValue = getCachedDateTimeFormat(locale, {
+          year: "numeric",
+          month: "long",
+        }).format(date);
 
         topValues.push(
           <TopPartOfCalendar
@@ -197,11 +214,26 @@ export const Calendar: React.FC<CalendarProps> = ({
         </text>
       );
       if (i === 0 || date.getDate() !== dates[i - 1].getDate()) {
+        /*
         const topValue = `${getLocalDayOfWeek(
           date,
           locale,
           "short"
         )}, ${date.getDate()} ${getLocaleMonth(date, locale)}`;
+        */
+        const topValue =
+          locale === "ja" || locale === "ja-JP"
+            ? `${getCachedDateTimeFormat(locale, {
+                month: "long",
+                day: "numeric",
+                weekday: "narrow",
+              }).format(date)}`
+            : `${getLocalDayOfWeek(
+                date,
+                locale,
+                "short"
+              )}, ${date.getDate()} ${getLocaleMonth(date, locale)}`;
+
         topValues.push(
           <TopPartOfCalendar
             key={topValue + date.getFullYear()}
@@ -242,11 +274,27 @@ export const Calendar: React.FC<CalendarProps> = ({
         </text>
       );
       if (i === 0 || date.getDate() !== dates[i - 1].getDate()) {
+        /*
         const topValue = `${getLocalDayOfWeek(
           date,
           locale,
           "long"
         )}, ${date.getDate()} ${getLocaleMonth(date, locale)}`;
+        */
+        const topValue =
+          locale === "ja" || locale === "ja-JP"
+            ? `${getCachedDateTimeFormat(locale, {
+                month: "long",
+                day: "numeric",
+                weekday: "narrow",
+              }).format(date)}`
+            : `${getLocalDayOfWeek(
+                date,
+                locale,
+                "long"
+              )}, ${date.getDate()} ${getLocaleMonth(date, locale)}`;
+
+
         const topPosition = (date.getHours() - 24) / 2;
         topValues.push(
           <TopPartOfCalendar
